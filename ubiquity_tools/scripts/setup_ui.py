@@ -1,16 +1,16 @@
 #!/usr/bin/python
 import sys 
 
-from PyQt5 import QtCore, QtGui, QtWidgets
-from PyQt5.QtWidgets import QApplication, QDialog
-from PyQt5.uic import loadUi
+from PySide import QtUiTools
+from PySide import QtCore
+from PySide.QtGui import *
+
 import roslib
 import rospy
 from std_msgs.msg import String
 import termios, tty, os, time
 
-pub_file_requestor = rospy.Publisher('setup_requests', String, queue_size = 1)
-
+pub = rospy.Publisher('setup_requests', String, queue_size = 1)
 
 class myMenu(QDialog):
 
@@ -33,18 +33,20 @@ class myMenu(QDialog):
 		filedir = os.path.dirname(os.path.abspath(__file__))
 		print filedir
 		uiFile_path = os.path.join(filedir,'setup.ui')
-		loadUi(uiFile_path,self)
+
+                uifile = QtCore.QFile(uiFile_path)
+		self.window = QtUiTools.QUiLoader().load(uifile)
+		uifile.close()
+
 		rospy.Subscriber("route_file",String,self.callback_files)
-		rospy.sleep(1)
-		pub_file_requestor.publish("files")
-		rospy.sleep(1)
+		pub.publish("files")
 		print "filename request published"
-		self.save_session.clicked.connect(self.button_save)
-		self.new_session.clicked.connect(self.button_new)
-		self.safepoints.clicked.connect(self.button_safepoints)
-		self.safepaths.clicked.connect(self.button_safepaths)
-		self.listWidget.setSelectionMode(QtWidgets.QAbstractItemView.SingleSelection)
-		self.route.clicked.connect(self.button_route)
+
+                self.window.findChild(QPushButton, 'save_session').clicked.connect(self.button_save)
+                self.window.findChild(QPushButton, 'safepoints').clicked.connect(self.button_safepoints)
+                self.window.findChild(QPushButton, 'safepaths').clicked.connect(self.button_safepaths)
+                self.window.findChild(QPushButton, 'route').clicked.connect(self.button_route)
+                self.window.findChild(QListWidget, 'listWidget').setSelectionMode(QAbstractItemView.SingleSelection)
 
 	def mousePressEvent(self,event):
 		super(myMenu, self).mousePressEvent(event)
@@ -78,9 +80,8 @@ class myMenu(QDialog):
 		self.close()
 	
 	def button_route(self):
-		item = self.listWidget.selectedItems()
 		try:
-			msg = str(self.listWidget.selectedItems()[0].text())
+			msg = str(self.window.findChild(QListWidget, 'listWidget').selectedItems()[0].text())
 		except:
 			msg = "goals_current.yaml"
 		print msg
@@ -94,6 +95,6 @@ if __name__=='__main__':
 	app = QApplication(sys.argv)
 	window = myMenu()
 	window.setWindowTitle('Ubiquity TeleOp Tool Setup')
-	window.show()
+	window.window.show()
 	sys.exit(app.exec_())
 

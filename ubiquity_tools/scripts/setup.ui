@@ -44,7 +44,7 @@
     </font>
    </property>
    <property name="text">
-    <string>Ubiquity TeleOp Tool Setup:</string>
+    <string>Ubiquity Navigation Setup:</string>
    </property>
   </widget>
   <widget class="QPushButton" name="safepoints">
