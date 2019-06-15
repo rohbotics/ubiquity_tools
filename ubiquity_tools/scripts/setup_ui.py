@@ -96,3 +96,4 @@ if __name__=='__main__':
 	window.setWindowTitle('Ubiquity TeleOp Tool Setup')
 	window.show()
 	sys.exit(app.exec_())
+

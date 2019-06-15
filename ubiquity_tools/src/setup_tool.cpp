@@ -77,7 +77,7 @@ namespace ubiquity_tools
   {
     context_->getSelectionManager()->enableInteraction(true);
     context_->getSelectionManager()->setTextureSize(1);
-    system("python ~/ubiquity/current_rviz/src/ubiquity_tools/scripts/setup_ui.py");
+    system("python /home/rohan/melodic_catkin/src/ubiquity_tools/ubiquity_tools/scripts");
   }
 
   void SetupTool::deactivate()
